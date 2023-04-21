@@ -89,12 +89,12 @@ public class GameManager : MonoBehaviour
 
             // Узнаем, загружаем ли мы игру, или создаём новую:
             // Новая игра.
-            if (MainMenuManager.gameSessions == null || MainMenuManager.sessionToStart == -1)
+            if (MainMenuManager.currentProfile.gameSessions == null || MainMenuManager.sessionToStart == -1)
             {
-                if (MainMenuManager.gameSessions == null)
+                if (MainMenuManager.currentProfile.gameSessions == null)
                 {
                     Debug.LogWarning("Режим Дебага! Старые сессии будут удалены после сохранения в этом режиме!");
-                    MainMenuManager.gameSessions = new List<GameSession>(0);
+                    MainMenuManager.currentProfile.gameSessions = new List<GameSession>(0);
                 }
                 if (MainMenuManager.gameSessionToCreate == null)
                 {
@@ -104,7 +104,7 @@ public class GameManager : MonoBehaviour
 
                 gameSession = MainMenuManager.gameSessionToCreate;
                 // И сразу сохраним эту игровую сессию.
-                MainMenuManager.gameSessions.Add(gameSession);
+                MainMenuManager.currentProfile.gameSessions.Add(gameSession);
 
                 // Создаём Районы.
                 for (int i = 0; i < districts.Count; i++)
@@ -127,7 +127,7 @@ public class GameManager : MonoBehaviour
             // Загружаем игровую сессию.
             else
             {
-                gameSession = MainMenuManager.gameSessions[MainMenuManager.sessionToStart];
+                gameSession = MainMenuManager.currentProfile.gameSessions[MainMenuManager.sessionToStart];
 
                 // Создаём Районы.
                 for (int i = 0; i < districts.Count; i++)
@@ -555,6 +555,16 @@ public class GameManager : MonoBehaviour
         {
             // И обновим цвета Районов под их владельцев.
             districts[i].LoadHolder(gameSession.DistrictsInfos[i]);
+        }
+
+        // Теперь обновим имя игрока под имя его профиля (вдруг он менял имя профиля).
+        for (int i = 0; i < gameSession.Countries.Count; i++)
+        {
+            if (gameSession.Countries[i].Leader.IsPlayer == true)
+            {
+                gameSession.Countries[i].Leader.LeaderName = MainMenuManager.currentProfile.profileName;
+                break;
+            }
         }
     }
 

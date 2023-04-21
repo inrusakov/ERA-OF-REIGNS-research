@@ -10,6 +10,7 @@ public class SavedSessionItem : MonoBehaviour
     private int sessionId;
     [SerializeField] private TMP_Text nameForTheSession;
     [SerializeField] private TMP_Text lastDate;
+    [SerializeField] private TMP_Text renameForTheSession;
 
     public static MainMenuManager MainMenuManagerVar { get => mainMenuManager; set => mainMenuManager = value; }
 
@@ -28,8 +29,10 @@ public class SavedSessionItem : MonoBehaviour
     public void CreateItem(int sessionId)
     {
         this.sessionId = sessionId;
-        nameForTheSession.text = MainMenuManager.gameSessions[sessionId].SessionName;
-        lastDate.text = "Последний запуск: " + MainMenuManager.gameSessions[sessionId].LastPlayingTime;
+        nameForTheSession.text = MainMenuManager.currentProfile.gameSessions[sessionId].SessionName;
+        lastDate.text = "Последний запуск: " + MainMenuManager.currentProfile.gameSessions[sessionId].LastPlayingTime;
+
+        renameForTheSession.text = nameForTheSession.text;
     }
 
     public void LoadSession()
@@ -43,5 +46,18 @@ public class SavedSessionItem : MonoBehaviour
     public void DeleteSession()
     {
         MainMenuManagerVar.DeleteListItem(sessionId);
+    }
+
+    public void RenameSession()
+    {
+        // Проверим, дали ли название.
+        if (string.IsNullOrEmpty(renameForTheSession.text) || renameForTheSession.text.StartsWith("\u200B"))
+        {
+            // Ничего не делаем.
+            return;
+        }
+
+        MainMenuManager.currentProfile.gameSessions[sessionId].SessionName = renameForTheSession.text;
+        MainMenuManagerVar.RefreshLoadList();
     }
 }

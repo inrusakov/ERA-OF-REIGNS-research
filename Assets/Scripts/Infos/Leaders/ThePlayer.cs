@@ -15,7 +15,8 @@ public class ThePlayer : Leader
     public ThePlayer(LeaderMonoBehaviour leaderMonoBehaviour) : base(leaderMonoBehaviour)
     {
         // Назначим имя.
-        leaderName = System.Environment.UserName;
+        //leaderName = System.Environment.UserName;
+        leaderName = MainMenuManager.currentProfile.profileName;
 
         // Назначим цвет Страны.
         Country.SetCountryColor(Color.green);
