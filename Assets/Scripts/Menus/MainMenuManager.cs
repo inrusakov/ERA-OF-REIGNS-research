@@ -111,6 +111,7 @@ public class MainMenuManager : MonoBehaviour
             loadSessionButton.interactable = false;
             ShowHelp();
         }
+        else loadSessionButton.interactable = true;
 
         profilesUI.gameObject.SetActive(false);
     }
