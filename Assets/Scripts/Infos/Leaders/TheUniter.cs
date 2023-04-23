@@ -55,6 +55,8 @@ public class TheUniter : Leader
         PeaceAcceptedLine = "Наш конфликт отныне разрешён. Надеюсь, наши интересы не пересекутся вновь.";
         WarDeclarationFromThisLine = "Вы встали на пути единства моей империи. Вы поплатитесь за это!";
         WarDeclarationToThisLine = "Ваша империя мне не угрожает! Это война быстро закончится...";
+
+        MultiplyStartVariablesByDifficultyInfluence();
     }
 
     public override void MakeMove()

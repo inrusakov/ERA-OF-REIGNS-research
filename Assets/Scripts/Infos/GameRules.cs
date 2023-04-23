@@ -168,6 +168,10 @@ public class GameRules
     /// Здоровье юнита. (0 - воин, 1 - усиленный воин, 2 - всадник, 3 - тайная полиция).
     /// </summary>
     public List<int> Healths { get => healths; set => healths = value; }
+    /// <summary>
+    /// Коэффициент, на который умножатся начальные значения ИИ-Лидеров.
+    /// </summary>
+    public int DifficultyInfluence { get => difficultyInfluence; set => difficultyInfluence = value; }
 
 
 
@@ -228,6 +232,9 @@ public class GameRules
 
     List<int> damages = new List<int>() { 2, 2, 3, 4};
     List<int> healths = new List<int>() { 1, 2, 2, 3};
+
+    // Коэффициент, на который умножаются начальные параметры лидеров.
+    int difficultyInfluence = 1;
 
     #endregion
 }

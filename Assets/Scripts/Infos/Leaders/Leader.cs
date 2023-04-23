@@ -56,6 +56,14 @@ public class Leader
         isPlayer = false;
     }
 
+    protected void MultiplyStartVariablesByDifficultyInfluence()
+    {
+        Country.Gold *= LeaderMonoBehaviour.GameManager.gameSession.GameRules.DifficultyInfluence;
+        Country.Iron *= LeaderMonoBehaviour.GameManager.gameSession.GameRules.DifficultyInfluence;
+        Country.Horses *= LeaderMonoBehaviour.GameManager.gameSession.GameRules.DifficultyInfluence;
+        Country.Agents *= LeaderMonoBehaviour.GameManager.gameSession.GameRules.DifficultyInfluence;
+    }
+
     protected bool battleIsGoingToHappen;
     /// <summary>
     /// Попросить Лидера сделать ход.
@@ -253,7 +261,7 @@ public class Leader
     /// </summary>
     /// <param name="neutralDistricts"></param>
     /// <param name="enemyDistricts"></param>
-    protected bool ConquerNeutralOrEnemyDistrict(List<DistrictInfo> neutralDistricts, List<DistrictInfo> enemyDistricts)
+    protected virtual bool ConquerNeutralOrEnemyDistrict(List<DistrictInfo> neutralDistricts, List<DistrictInfo> enemyDistricts)
     {
         Debug.Log("Лидер обдумывает случай, когда есть нейтральные и вражеские районы.");
 

@@ -31,6 +31,8 @@ public class TheСollector : Leader
         PeaceAcceptedLine = "Наконец, мы можем сложить оружие. Будет непросто, но я верю, мы подружимся вновь.";
         WarDeclarationFromThisLine = "Прошу меня понять: на кону существование моей страны! Очень жаль, но военный конфликт неизбежен.";
         WarDeclarationToThisLine = "Очень жаль, что вы опускаетесь до такого уровня... Ещё не поздно остановить это... Правда!";
+
+        MultiplyStartVariablesByDifficultyInfluence();
     }
 
     public override void MakeMove()
@@ -42,6 +44,7 @@ public class TheСollector : Leader
         if (!battleIsGoingToHappen) LeaderMonoBehaviour.GameManager.NextMove();
         //LeaderMonoBehaviour.GameManager.NextMove();
     }
+
 
     public override void RequestPeace(Country otherCountry)
     {
@@ -64,5 +67,11 @@ public class TheСollector : Leader
 
             if (otherCountry.Leader.IsPlayer) LeaderMonoBehaviour.OpenDialogUI("Простите, мы согласны, но не прямо сейчас. Предложите ещё раз немного позже", false);
         }
+    }
+
+    protected override bool ConquerNeutralOrEnemyDistrict(List<DistrictInfo> neutralDistricts, List<DistrictInfo> enemyDistricts)
+    {
+        // Атакуем нейтральный.
+        return ConquerNeutralDistrict(neutralDistricts);
     }
 }

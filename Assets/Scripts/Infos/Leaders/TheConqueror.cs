@@ -31,6 +31,8 @@ public class TheConqueror : Leader
         PeaceAcceptedLine = "Хорошо, перерыв. До встречи!";
         WarDeclarationFromThisLine = "Ваши земли слишком привлекательны, я их забираю себе - пожалуйста, не сопротивляйтесь!";
         WarDeclarationToThisLine = "Ха! А вы хороши! Я даже рад, давайте повоюем!";
+
+        MultiplyStartVariablesByDifficultyInfluence();
     }
 
     public override void MakeMove()
@@ -41,6 +43,72 @@ public class TheConqueror : Leader
 
         if (!battleIsGoingToHappen) LeaderMonoBehaviour.GameManager.NextMove();
         //LeaderMonoBehaviour.GameManager.NextMove();
+    }
+
+    protected override bool ExpandLands()
+    {
+        // Распределим все не наши соседние Районы по спискам.
+        List<DistrictInfo> neutralDistricts = new();
+        List<DistrictInfo> someonesDistricts = new();
+        List<DistrictInfo> enemyDistricts = new();
+
+        // Проходимся по всем Районам нашей страны...
+        for (int i = 0; i < Country.DistrictsIds.Count; i++)
+        {
+            DistrictInfo mydistrict = LeaderMonoBehaviour.GameManager.gameSession.FindDistrictById(Country.DistrictsIds[i]);
+            // Проходимся по всем соседним Районам текущего нашего Района...
+            for (int j = 0; j < mydistrict.districtFunc.nearbyDistricts.Count; j++)
+            {
+                DistrictInfo otherDistrict = mydistrict.districtFunc.nearbyDistricts[j].districtInfo;
+                // Если соседний район не имеет хозяина, добавим в нейтральные.
+                if (otherDistrict.holder == null)
+                {
+                    AddIfNotAdded(otherDistrict, neutralDistricts);
+                    //neutralDistricts.Add(otherDistrict);
+                }
+                else
+                {
+                    // Если соседний Район - наш, пропускаем.
+                    if (otherDistrict.holder == Country) continue;
+                    // Если соседний район чей-то...
+                    if (LeaderMonoBehaviour.GameManager.gameSession.FindRelationship(Country.CountryId, otherDistrict.holder.CountryId).AtWar)
+                    {
+                        // И он вражеский.
+                        AddIfNotAdded(otherDistrict, enemyDistricts);
+                        //enemyDistricts.Add(otherDistrict);
+                    }
+                    else
+                    {
+                        // И он просто чей-то.
+                        AddIfNotAdded(otherDistrict, someonesDistricts);
+                        //someonesDistricts.Add(otherDistrict);
+                    }
+                }
+            }
+        }
+        Debug.Log("Было обнаружено: " + neutralDistricts.Count + " нейтральных районов; "
+            + someonesDistricts.Count + " чьих-то районов; " + enemyDistricts.Count + " вражеских районов.");
+
+
+        // Если есть нейтральные и чьи-то.
+        if (enemyDistricts.Count == 0 && neutralDistricts.Count != 0 && someonesDistricts.Count != 0)
+        {
+            Debug.Log("Лидер \"ЗАВОЕВАТЕЛЬ\" обнаружил только нейтральные и чьи-то районы. Выбирает, какой тип будет рассматривать, чтобы атаковать");
+            if (MakeProbabilityWeightedDecision(50)) return ConquerSomeonesDistrict(someonesDistricts);
+            else return ConquerNeutralDistrict(neutralDistricts);
+        }
+
+
+        // Если есть нейтральные и нет вражеских.
+        if (neutralDistricts.Count != 0 && enemyDistricts.Count == 0) return ConquerNeutralDistrict(neutralDistricts);
+        // Если есть нейтральные и вражеские.
+        if (neutralDistricts.Count != 0 && enemyDistricts.Count != 0) return ConquerNeutralOrEnemyDistrict(neutralDistricts, enemyDistricts);
+        // Если нет нейтральных и есть вражеские.
+        if (enemyDistricts.Count != 0 && neutralDistricts.Count == 0) return ConquerEnemyDistrict(enemyDistricts);
+        // Если есть только чьи-то.
+        if (enemyDistricts.Count == 0 && neutralDistricts.Count == 0 && someonesDistricts.Count != 0) return ConquerSomeonesDistrict(someonesDistricts);
+
+        return false;
     }
 
     /// <summary>

@@ -40,6 +40,8 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] ProfileItem profileItem = null;
     [SerializeField] TMP_Text newProfileNameText;
 
+    [SerializeField] TMP_Dropdown difficultyDropdown;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -124,11 +126,23 @@ public class MainMenuManager : MonoBehaviour
 
     public void StartNewSession()
     {
-        // TODO: Здесь передаём новые GameRules.
-
         // Создадим новую сессию и запустим её.
-        gameSessionToCreate = new GameSession(0);
+        //gameSessionToCreate = new GameSession(0);
         sessionToStart = -1;
+
+        // TODO: Здесь передаём новые GameRules.
+        if (difficultyDropdown.value == 0)
+        {
+            Debug.Log("Нормальная сложность 0");
+            gameSessionToCreate = new GameSession(0);
+        }
+        else
+        {
+            Debug.Log("Сложность 1");
+            gameSessionToCreate = new GameSession(0, new GameRules() { DifficultyInfluence = 2 });
+        }
+
+        Debug.Log("DifficultyInfluence: " + gameSessionToCreate.GameRules.DifficultyInfluence);
 
         // Проверим, дали ли название.
         if (string.IsNullOrEmpty(nameForTheNewSession.text) || nameForTheNewSession.text.StartsWith("\u200B"))
